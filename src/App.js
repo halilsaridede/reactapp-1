@@ -17,17 +17,17 @@ const customStyles = {
   },
 };
 
-function App() {
+const App = () => {
   const [height, setHeight] = useState(window.innerHeight);
   const [width, setWidth] = useState(window.innerWidth);
   const [startDate, setStartDate] = useState(new Date());
   const [finishDate, setFinishDate] = useState(new Date());
-  const [remainingTime, setRemainingTime] = useState();
-  const [goalInput, setGoalInput] = useState("");
+  const [goalInput, setGoalInput] = useState();
   const [dropdownValue, setDropdownValue] = useState();
   const [email, setEmail] = useState();
   const [superVisorEmail, setSuperVisorEmail] = useState();
   const [modalIsOpen, setIsOpen] = useState(false);
+  const [remainingTimeState, setRemainingTimeState] = useState(0);
 
   let sectionStyle = {
     display: "flex",
@@ -39,20 +39,22 @@ function App() {
   };
 
   let priceValueOfArray = ["25₺", "50₺", "100₺", "250₺", "1000₺"];
-  let priceSave;
 
-  function parseDate(str) {
-    str += " ";
-    moment(str).format("l");
-    var mdy = str.split("/");
-    return new Date(mdy[2], mdy[0] - 1, mdy[1]);
-  }
+  // kalan gün sayısını vermek için kullanılan fonk
+  const remainingTimeIsFunc = (inputTime) => {
+    // bugunu sayısal deger olarak aldık
+    let convertNewDate = new Date().getTime();
+    // girilen günü sayısal değer olarak aldık
+    let convertInputTime = inputTime.getTime();
+    // bu iki günün sayısal değerini birbirinden cıkardık
+    let remainingTimeResult = convertInputTime - convertNewDate;
+    // bu cıkan sonucu güne tekabul edip math yerel fonksiyonu ile yuvarlayıp float değerden number deger haline getirdik
+    let lastTimeInNow = Math.round(remainingTimeResult / (1000 * 3600 * 24));
+    // return ile bu değeri döndürdük
+    return lastTimeInNow;
+  };
 
-  function datediff(first, second) {
-    return Math.round((second - first) / (1000 * 60 * 60 * 24));
-  }
-
-  //alert(datediff(parseDate(startDate), parseDate(finishDate)));
+  console.log(goalInput);
 
   return (
     <div style={sectionStyle} className="mx-auto">
@@ -73,7 +75,7 @@ function App() {
           style={{
             marginBottom: "30px",
           }}
-        clasName="divTrial" 
+          clasName="divTrial"
         >
           <div
             style={{
@@ -92,7 +94,6 @@ function App() {
             value={goalInput}
             onChange={(e) => {
               setGoalInput(e.target.value);
-              console.log(goalInput);
             }}
             type="text"
             placeholder="Enter Goal"
@@ -131,7 +132,10 @@ function App() {
                 selected={finishDate}
                 minDate={new Date()}
                 onChange={(date) => {
+                  // finishDate statetine girilen değeri atıyoruz
                   setFinishDate(date);
+                  // remainingTimeState tinin içinde gün sayısını veren fonksiyonu çalıştırıp bu statemizin içine kalan gün sayısını atıyoruz
+                  setRemainingTimeState(remainingTimeIsFunc(date));
                 }}
               />
             </div>
@@ -143,7 +147,7 @@ function App() {
               marginBottom: "30px",
             }}
           >
-            {"Remaining time"}
+            {`That's ${remainingTimeState} days from now`}
           </div>
           <div
             style={{
@@ -163,7 +167,6 @@ function App() {
               onChange={(e) => {
                 e.preventDefault();
                 setDropdownValue(e.target.value);
-                console.log(dropdownValue);
               }}
               value={dropdownValue}
               style={{
@@ -171,6 +174,7 @@ function App() {
               }}
             >
               {priceValueOfArray.map((val, ind) => {
+                // optionları dizinin içinden değerleri çekerek yazdırdık
                 return <option value={val}>{val}</option>;
               })}
             </select>
@@ -200,6 +204,9 @@ function App() {
             />
             <input
               value={superVisorEmail}
+              // onChange -> inputun değişmesini sağlar
+              // (e) => içine yazılan değeri temsil eder
+              // target -> hedefteki anlamına gelir. yerel bir ozellik
               onChange={(e) => setSuperVisorEmail(e.target.value)}
               style={{
                 borderRadius: 5,
@@ -212,6 +219,9 @@ function App() {
             <button
               type="button"
               className="btn btn-primary"
+              style={{
+                pointerEvents: 0 === 0 ? "none" : "flex",
+              }}
               data-bs-toggle="modal"
               data-bs-target="#exampleModal"
             >
@@ -240,7 +250,7 @@ function App() {
                   </div>
                   <div className="modal-body">
                     <div>{`Goal: ${goalInput}`}</div>
-                    <div>{`Remaining time: ${dropdownValue}`}</div>
+                    <div>{`Remaining time: ${remainingTimeState} days`}</div>
                     <div>{`Setting price: ${dropdownValue}`}</div>
                     <div>{`Email: ${email}`}</div>
                     <div>{`Supervisor Email: ${superVisorEmail}`}</div>
@@ -273,6 +283,6 @@ function App() {
       </form>
     </div>
   );
-}
+};
 
 export default App;

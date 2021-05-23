@@ -22,10 +22,10 @@ const App = () => {
   const [width, setWidth] = useState(window.innerWidth);
   const [startDate, setStartDate] = useState(new Date());
   const [finishDate, setFinishDate] = useState(new Date());
-  const [goalInput, setGoalInput] = useState();
+  const [goalInput, setGoalInput] = useState("");
   const [dropdownValue, setDropdownValue] = useState();
-  const [email, setEmail] = useState();
-  const [superVisorEmail, setSuperVisorEmail] = useState();
+  const [email, setEmail] = useState("");
+  const [superVisorEmail, setSuperVisorEmail] = useState("");
   const [modalIsOpen, setIsOpen] = useState(false);
   const [remainingTimeState, setRemainingTimeState] = useState(0);
 
@@ -54,7 +54,27 @@ const App = () => {
     return lastTimeInNow;
   };
 
-  console.log(goalInput);
+  let displayIsState;
+
+  if(goalInput === '') {
+    displayIsState = 'none'
+  }
+  else if(email === '') {
+    displayIsState = 'none'
+  }
+  else if(superVisorEmail === '') {
+    displayIsState = 'none'
+  }
+  else if(remainingTimeState === 0) {
+    displayIsState = 'none'
+  }
+  else if(dropdownValue === undefined) {
+    displayIsState = 'none'
+  }
+  else {
+    displayIsState = 'auto'
+  }
+  
 
   return (
     <div style={sectionStyle} className="mx-auto">
@@ -75,7 +95,6 @@ const App = () => {
           style={{
             marginBottom: "30px",
           }}
-          clasName="divTrial"
         >
           <div
             style={{
@@ -220,7 +239,7 @@ const App = () => {
               type="button"
               className="btn btn-primary"
               style={{
-                pointerEvents: 0 === 0 ? "none" : "flex",
+                pointerEvents: displayIsState
               }}
               data-bs-toggle="modal"
               data-bs-target="#exampleModal"
@@ -260,15 +279,20 @@ const App = () => {
                       type="button"
                       className="btn btn-secondary"
                       data-bs-dismiss="modal"
-                      onClick={() => alert("You fail")}
+                      onClick={() => {
+                        alert("You fail");
+                        window.location.reload();
+                      }}
                     >
                       Not agree
                     </button>
                     <button
                       type="button"
                       data-bs-dismiss="modal"
-                      onClick={() =>
+                      onClick={() => {
                         alert("DONE! I saved your goal. Time to get cracking")
+                        window.location.reload();
+                      }
                       }
                       class="btn btn-primary"
                     >
